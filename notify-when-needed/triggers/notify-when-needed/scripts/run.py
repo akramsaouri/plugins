@@ -46,9 +46,10 @@ thread_id = os.environ.get("TRIGGER_EVENT_THREAD_ID")
 event_id = os.environ.get("TRIGGER_EVENT_ID")
 
 # State lives under data/artifacts/, anchored on LUCIDOS_WORKSPACE.
-# __file__ is NOT safe here: the engine copies the source into
-# .lucidos/exhaust/<run-id>/ and runs that copy, so a __file__-relative path
-# writes to a phantom directory. See knowhow/script-state-paths.md.
+# Don't derive it from __file__: the engine runs trigger scripts in place, but
+# a copy run by hand or from a worktree would then write state somewhere
+# wrong. The __file__ fallback below only matches the installed layout
+# (data/triggers/.../scripts -> data/artifacts/). See knowhow/script-state-paths.md.
 # A missing file is treated as empty state (see already_pushed).
 _WS = os.environ.get("LUCIDOS_WORKSPACE")
 _STATE_DIR = (
